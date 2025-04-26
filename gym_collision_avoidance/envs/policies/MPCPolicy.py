@@ -85,6 +85,22 @@ class MPCPolicy(InternalPolicy):
         ])
         crowd_poss = None
         crowd_vels = None
+        if self.mpc.n_crowd > 0:
+            crowd_poss = np.zeros((self.mpc.n_crowd, 2))
+            crowd_vels = np.zeros((self.mpc.n_crowd, 2))
+            p_crowd_ref_to_goal = obs["other_agents_states"][:self.mpc.n_crowd, :2]
+            v_crowd_ref_to_goal = obs["other_agents_states"][:self.mpc.n_crowd, 2:4]
+            ref_prll = np.flip(goal_rel_xy / np.linalg.norm(goal_rel_xy))
+
+            for i in range(self.mpc.n_crowd):
+                crowd_poss[i] = np.array([
+                    np.dot(p_crowd_ref_to_goal[i], ref_prll),
+                    np.dot(p_crowd_ref_to_goal[i], np.array([ref_prll[1], -ref_prll[0]]))
+                ])
+                crowd_vels[i] = np.array([
+                    np.dot(v_crowd_ref_to_goal[i], ref_prll),
+                    np.dot(v_crowd_ref_to_goal[i], np.array([ref_prll[1], -ref_prll[0]]))
+                ])
         walls = np.array([20, 20, 20, 20])
         obs = (goal_rel_xy, crowd_poss, self.agent_vel, crowd_vels, walls)
 
