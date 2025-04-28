@@ -26,6 +26,9 @@ from gym_collision_avoidance.envs.dynamics.ExternalDynamics import (
 from gym_collision_avoidance.envs.dynamics.UnicycleDynamics import (
     UnicycleDynamics,
 )
+from gym_collision_avoidance.envs.dynamics.MyUnicycleDynamics import (
+    MyUnicycleDynamics
+)
 from gym_collision_avoidance.envs.dynamics.UnicycleDynamicsMaxTurnRate import (
     UnicycleDynamicsMaxTurnRate,
 )

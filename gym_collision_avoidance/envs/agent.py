@@ -28,7 +28,7 @@ class Agent(object):
     """
     def __init__(self, start_x, start_y, goal_x, goal_y, radius,
                  pref_speed, initial_heading, policy, dynamics_model, sensors, id):
-        self.policy = policy()
+        self.policy = policy(initial_heading)
         self.dynamics_model = dynamics_model(self)
         self.sensors = [sensor() for sensor in sensors]
 

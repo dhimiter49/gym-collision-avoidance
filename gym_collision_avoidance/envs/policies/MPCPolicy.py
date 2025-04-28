@@ -27,8 +27,9 @@ class MPCPolicy(InternalPolicy):
     """
     Pre-trained policy using TRPL and ProDMP with MPC as controller.
     """
-    def __init__(self):
+    def __init__(self, initial_heading):
         InternalPolicy.__init__(self, str="MPC")
+        self.agent_dir = initial_heading
 
 
     def initialize_network(self, **kwargs):
@@ -57,7 +58,6 @@ class MPCPolicy(InternalPolicy):
             n_crowd=0,
         )
         self.agent_vel = np.zeros(2)
-        self.agent_dir = 0.0
 
 
     def find_next_action(self, obs, agents, i):
@@ -76,12 +76,11 @@ class MPCPolicy(InternalPolicy):
 
         # prepare observation for MPC
         goal_dist = obs["dist_to_goal"]
-        heading_to_goal = obs["heading_ego_frame"]
+        heading_to_goal = -obs["heading_ego_frame"]
 
-        abs_heading_to_goal = heading_to_goal - self.agent_dir
+        abs_heading_to_goal = heading_to_goal + self.agent_dir
         goal_rel_xy = goal_dist * np.array([
-            np.cos(abs_heading_to_goal),
-            np.sign(abs_heading_to_goal) * np.sin(abs_heading_to_goal)
+            np.cos(abs_heading_to_goal), np.sin(abs_heading_to_goal)
         ])
         crowd_poss = None
         crowd_vels = None
@@ -108,10 +107,10 @@ class MPCPolicy(InternalPolicy):
         plan = self.planner.plan(obs)
 
         # predict next step
-        next_vel = self.mpc.get_action(plan, obs)[0]
-        actual_vel = (next_vel + self.agent_vel) / 2
-        speed = np.linalg.norm(actual_vel)
-        heading = np.sign(actual_vel[1]) * np.arccos(actual_vel[0] / speed) -\
+        pred_traj = self.mpc.get_action(plan, obs)
+        next_vel = pred_traj[0]
+        speed = np.linalg.norm(next_vel)
+        heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
             self.agent_dir
         self.agent_vel = next_vel
         self.agent_dir += heading
