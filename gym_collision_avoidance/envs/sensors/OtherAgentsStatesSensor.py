@@ -22,9 +22,9 @@ class OtherAgentsStatesSensor(Sensor):
 
         Args:
             sorting_criteria (str): how to sort the list of agents (one of ['closest_last', 'closest_first', 'time_to_impact']). See journal paper.
-    
+
         Returns:
-            clipped_sorted_inds (list): indices of the "closest" max_num_other_agents_observed 
+            clipped_sorted_inds (list): indices of the "closest" max_num_other_agents_observed
                 agents sorted by "closeness" ("close" defined by sorting criteria),
 
         """
@@ -132,7 +132,7 @@ class OtherAgentsStatesSensor(Sensor):
                                   other_agent.radius,
                                   combined_radius,
                                   dist_2_other])
-            
+
             if other_agent_count == 0:
                 host_agent.other_agent_states[:] = other_obs
 

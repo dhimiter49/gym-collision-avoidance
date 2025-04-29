@@ -64,6 +64,9 @@ from gym_collision_avoidance.envs.sensors.OccupancyGridSensor import (
 from gym_collision_avoidance.envs.sensors.OtherAgentsStatesSensor import (
     OtherAgentsStatesSensor,
 )
+from gym_collision_avoidance.envs.sensors.AgentsAbsStatesSensor import (
+    AgentsAbsStatesSensor,
+)
 from gym_collision_avoidance.envs.sensors.MyOtherAgentsStatesSensor import (
     MyOtherAgentsStatesSensor,
 )

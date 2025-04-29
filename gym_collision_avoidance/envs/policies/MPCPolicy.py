@@ -29,6 +29,7 @@ class MPCPolicy(InternalPolicy):
     """
     def __init__(self, initial_heading):
         InternalPolicy.__init__(self, str="MPC")
+        self.agent_vel = np.zeros(2)
         self.agent_dir = initial_heading
 
 
@@ -38,7 +39,7 @@ class MPCPolicy(InternalPolicy):
         kwargs, a specific path and/or tensorflow checkpoint.
 
         Args:
-            kwargs['checkpt_name'] (str): name of checkpoint file to load (without file extension)
+            kwargs['checkpt_name'] (str): name of checkpoint file to load
             kwargs['checkpt_dir'] (str): path to checkpoint
 
         """
@@ -55,41 +56,33 @@ class MPCPolicy(InternalPolicy):
             const_dist_crowd=0.800001,
             agent_max_vel=3,
             agent_max_acc=1.5,
-            n_crowd=0,
+            n_crowd=1,
         )
-        self.agent_vel = np.zeros(2)
 
 
     def find_next_action(self, obs, agents, i):
-        """ Using only the dictionary obs, convert this to the vector needed for the GA3C-CADRL network, query the network, adjust the actions for this env.
+        """
 
         Args:
-            obs (dict): this :class:`~gym_collision_avoidance.envs.agent.Agent` 's observation vector
-            agents (list): [unused] of :class:`~gym_collision_avoidance.envs.agent.Agent` objects
+            obs (dict): this :class:`~gym_collision_avoidance.envs.agent.Agent`
+            agents (list): [unused]
             i (int): [unused] index of agents list corresponding to this agent
 
         Returns:
             [spd, heading change] command
 
         """
-        pref_speed = obs['pref_speed']
-
         # prepare observation for MPC
-        goal_dist = obs["dist_to_goal"]
-        heading_to_goal = -obs["heading_ego_frame"]
-
-        abs_heading_to_goal = heading_to_goal + self.agent_dir
-        goal_rel_xy = goal_dist * np.array([
-            np.cos(abs_heading_to_goal), np.sin(abs_heading_to_goal)
-        ])
-        crowd_poss = None
-        crowd_vels = None
-        if self.mpc.n_crowd > 0:
-            crowd_poss = obs["other_agents_states"][:self.mpc.n_crowd, :2]
-            crowd_vels = obs["other_agents_states"][:self.mpc.n_crowd, 2:4]
+        abs_state = obs["agents_abs_states"]
+        n_crowd = int((len(abs_state) - 3) // 3)  # 3 relates to agent states
+        agent_pos = abs_state[0]
+        agent_vel = abs_state[1]
+        goal_rel = abs_state[2] - agent_pos
+        crowd_poss = abs_state[3:3 + n_crowd].reshape(n_crowd, 2) - agent_pos
+        crowd_vels = abs_state[3 + n_crowd:3 + 2 * n_crowd].reshape(n_crowd, 2)
 
         walls = np.array([20, 20, 20, 20])
-        obs = (goal_rel_xy, crowd_poss, self.agent_vel, crowd_vels, walls)
+        obs = (goal_rel, crowd_poss, agent_vel, crowd_vels, walls)
 
         # plan
         plan = self.planner.plan(obs)
@@ -97,13 +90,13 @@ class MPCPolicy(InternalPolicy):
         # predict next step
         pred_traj = self.mpc.get_action(plan, obs)
         next_vel = pred_traj[0]
+
+        # adapt action to environment
         speed = np.linalg.norm(next_vel)
         heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
             self.agent_dir
         self.agent_vel = next_vel
         self.agent_dir += heading
-
-        # adapt action to environment
         action = np.array([speed, heading])
         return action
 

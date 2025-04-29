@@ -1,5 +1,5 @@
 import numpy as np
-from gym_collision_avoidance.envs import Config
+from gym_collision_avoidance.envs.config import Config, MPCConfig, ProDMPConfig
 from gym_collision_avoidance.envs.util import wrap, find_nearest
 import operator
 import math
@@ -21,13 +21,29 @@ class Agent(object):
 
     :param action_dim: (int) number of actions on each timestep (e.g., 2 because of speed, heading cmds)
     :param num_actions_to_store: (int) number of past action vectors to remember (I think just used by CADRL to compute turning_dir?)
-    
+
     :param near_goal_threshold: (float) once within this distance to goal, say that agent has reached goal
     :param dt_nominal: (float) time in seconds of each simulation step
 
     """
-    def __init__(self, start_x, start_y, goal_x, goal_y, radius,
-                 pref_speed, initial_heading, policy, dynamics_model, sensors, id):
+    def __init__(
+        self,
+        start_x, start_y,
+        goal_x, goal_y,
+        radius, pref_speed, initial_heading,
+        policy,
+        dynamics_model,
+        sensors,
+        id,
+        config: str = None,
+    ):
+        if config == "MPC":
+            self.config = MPCConfig()
+        elif config == "ProDMP":
+            self.config = ProDMPConfig()
+        else:
+            self.config = Config()
+
         self.policy = policy(initial_heading)
         self.dynamics_model = dynamics_model(self)
         self.sensors = [sensor() for sensor in sensors]
@@ -37,11 +53,11 @@ class Agent(object):
 
         self.num_actions_to_store = 2
         self.action_dim = 2
-        
+
         self.id = id
         self.dist_to_goal = 0.0
-        self.near_goal_threshold = Config.NEAR_GOAL_THRESHOLD
-        self.dt_nominal = Config.DT
+        self.near_goal_threshold = self.config.NEAR_GOAL_THRESHOLD
+        self.dt_nominal = self.config.DT
 
         self.num_other_agents_observed = 0
 
@@ -53,7 +69,7 @@ class Agent(object):
         self.t_offset = None
         self.global_state_dim = 11
         self.ego_state_dim = 3
-        
+
         self.reset(px=start_x, py=start_y, gx=goal_x, gy=goal_y, pref_speed=pref_speed, radius=radius, heading=initial_heading)
 
     def reset(self, px=None, py=None, gx=None, gy=None, pref_speed=None, radius=None, heading=None):
@@ -98,10 +114,10 @@ class Agent(object):
             self.pref_speed = pref_speed
 
         self.straight_line_time_to_reach_goal = (np.linalg.norm(self.pos_global_frame - self.goal_global_frame) - self.near_goal_threshold)/self.pref_speed
-        if Config.EVALUATE_MODE or Config.PLAY_MODE:
-            self.time_remaining_to_reach_goal = Config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
+        if self.config.EVALUATE_MODE or self.config.PLAY_MODE:
+            self.time_remaining_to_reach_goal = self.config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
         else:
-            self.time_remaining_to_reach_goal = Config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
+            self.time_remaining_to_reach_goal = self.config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
         self.time_remaining_to_reach_goal = max(self.time_remaining_to_reach_goal, self.dt_nominal)
         self.t = 0.0
 
@@ -133,7 +149,7 @@ class Agent(object):
         self.turning_dir = 0.0
 
         # self.latest_laserscan = LaserScan()
-        # self.latest_laserscan.ranges = 10*np.ones(Config.LASERSCAN_LENGTH)
+        # self.latest_laserscan.ranges = 10*np.ones(self.config.LASERSCAN_LENGTH)
 
         self.is_done = False
 
@@ -213,7 +229,7 @@ class Agent(object):
         self.past_actions[0, :] = action
 
         # Store info about the TF btwn the ego frame and global frame before moving agent
-        goal_direction = self.goal_global_frame - self.pos_global_frame 
+        goal_direction = self.goal_global_frame - self.pos_global_frame
         theta = np.arctan2(goal_direction[1], goal_direction[0])
         self.T_global_ego = np.array([[np.cos(theta), -np.sin(theta), self.pos_global_frame[0]], [np.sin(theta), np.cos(theta), self.pos_global_frame[1]], [0,0,1]])
         self.ego_to_global_theta = theta
@@ -224,13 +240,13 @@ class Agent(object):
 
         self.dynamics_model.update_ego_frame()
 
-        if Config.STORE_HISTORY:
+        if self.config.STORE_HISTORY:
             self._update_state_history()
 
         self._check_if_at_goal()
 
         self._store_past_velocities()
-        
+
         # Update time left so agent does not run around forever
         self.time_remaining_to_reach_goal -= dt
         self.t += dt
@@ -289,27 +305,27 @@ class Agent(object):
         return global_state, ego_state
 
     def get_sensor_data(self, sensor_name):
-        """ Extract the latest measurement from the sensor by looking up in the self.sensor_data dict (which is populated by the self.sense method. 
+        """ Extract the latest measurement from the sensor by looking up in the self.sensor_data dict (which is populated by the self.sense method.
 
         Args:
             sensor_name (str): name of the sensor (e.g., 'laserscan', I think from Sensor.str?)
-    
+
         """
         if sensor_name in self.sensor_data:
             return self.sensor_data[sensor_name]
 
     def get_agent_data(self, attribute):
         """ Grab the value of self.attribute (useful to define which states sensor uses from config file).
-    
+
         Args:
             attribute (str): which attribute of this agent to look up (e.g., "pos_global_frame")
-    
+
         """
         return getattr(self, attribute)
 
     def get_agent_data_equiv(self, attribute, value):
-        """ Grab the value of self.attribute and return whether it's equal to value (useful to define states sensor uses from config file). 
-        
+        """ Grab the value of self.attribute and return whether it's equal to value (useful to define states sensor uses from config file).
+
         Args:
             attribute (str): which attribute of this agent to look up (e.g., "radius")
             value (anything): thing to compare self.attribute to (e.g., 0.23)
@@ -322,15 +338,15 @@ class Agent(object):
 
     def get_observation_dict(self, agents):
         observation = {}
-        for state in Config.STATES_IN_OBS:
-            observation[state] = np.array(eval("self." + Config.STATE_INFO_DICT[state]['attr']))
+        for state in self.config.STATES_IN_OBS:
+            observation[state] = np.array(eval("self." + self.config.STATE_INFO_DICT[state]['attr']))
         return observation
 
     def get_ref(self):
         """ Using current and goal position of agent in global frame, compute coordinate axes of ego frame.
 
         Ego frame is defined as: origin at center of agent, x-axis pointing from agent's center to agent's goal (right-hand rule, z axis upward).
-        This is a useful representation for goal-conditioned tasks, since many configurations of agent-pos-and-goal in the global frame map to the same ego setup. 
+        This is a useful representation for goal-conditioned tasks, since many configurations of agent-pos-and-goal in the global frame map to the same ego setup.
 
         Returns:
         2-element tuple containing
@@ -354,7 +370,7 @@ class Agent(object):
 
     def ego_pos_to_global_pos(self, ego_pos):
         """ Convert a position in the ego frame to the global frame.
-    
+
         This might be useful for plotting some of the perturbation stuff.
 
         Args:
