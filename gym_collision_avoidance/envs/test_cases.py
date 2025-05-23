@@ -188,6 +188,42 @@ def get_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
     return agents
 
 
+def get_my_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
+    goal_x = 3
+    goal_y = 3
+    agents = [
+        Agent(
+            -goal_x,
+            -goal_y,
+            goal_x,
+            goal_y,
+            0.4,
+            1.0,
+            0.0,
+            policy_dict["ProDMP"],
+            MyUnicycleDynamics,
+            [AgentsAbsStatesSensor, LaserScanSensor],
+            0,
+            config="ProDMP"
+        ),
+        Agent(
+            goal_x,
+            goal_y,
+            -2,
+            -1,
+            0.4,
+            1.0,
+            np.pi,
+            policy_dict["ProDMP"],
+            MyUnicycleDynamics,
+            [AgentsAbsStatesSensor, LaserScanSensor],
+            1,
+            config="ProDMP"
+        ),
+    ]
+    return agents
+
+
 def get_testcase_two_agents_laserscanners():
     goal_x = 3
     goal_y = 3

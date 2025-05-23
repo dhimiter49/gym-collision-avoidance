@@ -98,8 +98,8 @@ class Config(object):
         ### SENSORS
         self.SENSING_HORIZON = np.inf
         # self.SENSING_HORIZON  = 3.0
-        self.LASERSCAN_LENGTH = 512  # num range readings in one scan
-        self.LASERSCAN_NUM_PAST = 3  # num range readings in one scan
+        self.LASERSCAN_LENGTH = 40  # num range readings in one scan
+        self.LASERSCAN_NUM_PAST = 1  # num range readings in one scan
         self.NUM_STEPS_IN_OBS_HISTORY = (
             1  # number of time steps to store in observation vector
         )
@@ -178,10 +178,24 @@ class Config(object):
                     (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 1),
                 ),
             },
+            "agents_abs_states": {
+                "dtype": np.float32,
+                "size": (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 7),
+                "bounds": [-np.inf, np.inf],
+                "attr": 'get_sensor_data("agents_abs_states")',
+                "std": np.tile(
+                    np.array([5.0, 5.0, 1.0, 1.0, 1.0, 5.0, 1.0], dtype=np.float32),
+                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 1),
+                ),
+                "mean": np.tile(
+                    np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0], dtype=np.float32),
+                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 1),
+                ),
+            },
             "laserscan": {
                 "dtype": np.float32,
                 "size": (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH),
-                "bounds": [0.0, 6.0],
+                "bounds": [0.0, 10.0],
                 "attr": 'get_sensor_data("laserscan")',
                 "std": 5.0
                 * np.ones(
@@ -214,21 +228,16 @@ class Config(object):
     def setup_obs(self):
         if not hasattr(self, "STATES_IN_OBS"):
             self.STATES_IN_OBS = [
-                "is_learning",
-                "num_other_agents",
-                "dist_to_goal",
-                "heading_ego_frame",
-                "pref_speed",
-                "radius",
-                "other_agents_states",
+                "agents_abs_states",
+                "laserscan",
             ]
-            # STATES_IN_OBS = [
+            # self.STATES_IN_OBS = [
             #     "dist_to_goal",
             #     "radius",
             #     "heading_ego_frame",
             #     "pref_speed",
-            #     "other_agent_states",
             #     "laserscan",
+            #     "agents_abs_states"
             # ]
             # STATES_IN_OBS = [
             #     "dist_to_goal",
@@ -256,6 +265,22 @@ class Config(object):
                 self.MEAN_OBS[state] = self.STATE_INFO_DICT[state]["mean"]
             if "std" in self.STATE_INFO_DICT[state]:
                 self.STD_OBS[state] = self.STATE_INFO_DICT[state]["std"]
+
+
+class MPCConfig(Config):
+    def __init__(self):
+        self.STATES_IN_OBS = ["agents_abs_states"]
+        super().__init__()
+
+
+class ProDMPConfig(Config):
+    def __init__(self):
+        self.STATES_IN_OBS = [
+            "agents_abs_states",
+            "laserscan",
+        ]
+        self.USE_STATIC_MAP = True
+        super().__init__()
 
 
 class EvaluateConfig(Config):

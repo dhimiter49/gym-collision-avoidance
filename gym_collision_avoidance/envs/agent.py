@@ -130,8 +130,8 @@ class Agent(object):
         self.ran_out_of_time = False
 
         self.num_states_in_history = int(1.2*self.time_remaining_to_reach_goal / self.dt_nominal)
-        self.global_state_history = np.empty((self.num_states_in_history, self.global_state_dim))
-        self.ego_state_history = np.empty((self.num_states_in_history, self.ego_state_dim))
+        self.global_state_history = np.empty((1000, self.global_state_dim))
+        self.ego_state_history = np.empty((1000, self.ego_state_dim))
 
         # self.past_actions = np.zeros((self.num_actions_to_store,2))
         self.past_global_velocities = np.zeros((self.num_actions_to_store,2))
@@ -165,7 +165,7 @@ class Agent(object):
 
     def _check_if_at_goal(self):
         """ Set :code:`self.is_at_goal` if norm(pos_global_frame - goal_global_frame) <= near_goal_threshold """
-        is_near_goal = (self.pos_global_frame[0] - self.goal_global_frame[0])**2 + (self.pos_global_frame[1] - self.goal_global_frame[1])**2 <= self.near_goal_threshold**2
+        is_near_goal = np.linalg.norm(self.pos_global_frame - self.goal_global_frame) <= self.near_goal_threshold
         self.is_at_goal = is_near_goal
 
     def set_state(self, px, py, vx=None, vy=None, heading=None):

@@ -1,6 +1,6 @@
 import numpy as np
 from gym_collision_avoidance.envs.sensors.Sensor import Sensor
-from gym_collision_avoidance.envs import Config
+from gym_collision_avoidance.envs.config import ProDMPConfig
 import matplotlib.pyplot as plt
 
 import time
@@ -22,18 +22,19 @@ class LaserScanSensor(Sensor):
 
     """
     def __init__(self):
-        if not Config.USE_STATIC_MAP:
-            print("LaserScanSensor won't work without static map enabled (Config.USE_STATIC_MAP)")
+        self.config = ProDMPConfig()
+        if not self.config.USE_STATIC_MAP:
+            print("LaserScanSensor won't work without static map enabled (self.config.USE_STATIC_MAP)")
             assert(0)
         Sensor.__init__(self)
         self.name = 'laserscan'
-        self.num_beams = Config.LASERSCAN_LENGTH
-        self.num_to_store = Config.LASERSCAN_NUM_PAST
-        self.range_resolution = 0.1
-        self.max_range = 6 # meters
+        self.num_beams = self.config.LASERSCAN_LENGTH
+        self.num_to_store = self.config.LASERSCAN_NUM_PAST
+        self.range_resolution = 2 * np.pi / self.num_beams
+        self.max_range = 10 # meters
         self.min_range = 0 # meters
-        self.min_angle = -np.pi/2
-        self.max_angle = np.pi/2
+        self.min_angle = 0
+        self.max_angle = 2 * np.pi - self.range_resolution
 
         self.angles = np.linspace(self.min_angle, self.max_angle, self.num_beams)
         self.ranges = np.arange(self.min_range, self.max_range, self.range_resolution)
@@ -42,6 +43,9 @@ class LaserScanSensor(Sensor):
 
         self.measurement_history = np.zeros((self.num_to_store, self.num_beams))
         self.num_measurements_made = 0
+
+        self.ray_cos = np.cos(self.angles)
+        self.ray_sin = np.sin(self.angles)
 
         if self.debug:
             plt.figure('lidar')
