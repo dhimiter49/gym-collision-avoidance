@@ -172,6 +172,14 @@ def draw_agents(agents, circles_along_traj, ax, last_index=-1):
         color_ind = i % len(plt_colors)
         plt_color = plt_colors[color_ind]
 
+        if type(agent.policy).__name__ == "ProDMPPolicy":
+            main_env = agent.policy.prodmp_env.envs[0]
+            while "CrowdNavigation" not in type(main_env).__name__:
+                main_env = main_env.env
+            plt.plot(main_env.pred_current_trajectory[:10, 0],
+                     main_env.pred_current_trajectory[:10, 1],
+                     color=plt_color, ls=':', linewidth=2)
+
         if circles_along_traj:
             plt.plot(agent.global_state_history[:agent.step_num+last_index+1, 1],
                      agent.global_state_history[:agent.step_num+last_index+1, 2],
