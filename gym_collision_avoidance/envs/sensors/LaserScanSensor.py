@@ -63,46 +63,54 @@ class LaserScanSensor(Sensor):
 
         """
 
+        agent = agents[agent_index]
+        agent_pos = agent.pos_global_frame
+        other_agents = agents[:agent_index] + agents[agent_index + 1:]
+        crowd_poss = np.array([a.pos_global_frame for a in other_agents])
+        crowd_vels = np.array([a.vel_global_frame for a in other_agents])
 
-        # Approx 200x faster than sense_old (0.002sec per call vs. 0.4sec) :)
-        host_agent = agents[agent_index]
 
-        angles = self.angles + host_agent.heading_global_frame
-        ranges = self.ranges
-        angles_ranges_mesh = np.meshgrid(angles, ranges)
-        angles_ranges = np.dstack([angles_ranges_mesh[0], angles_ranges_mesh[1]])
-        beam_coords = np.tile(host_agent.pos_global_frame, (len(angles), len(ranges), 1)).astype(np.float64)
-        beam_coords[:,:,0] += (angles_ranges[:,:,1]*np.cos(angles_ranges[:,:,0])).T
-        beam_coords[:,:,1] += (angles_ranges[:,:,1]*np.sin(angles_ranges[:,:,0])).T
+        x_crowd_rel, y_crowd_rel = crowd_poss[:, 0] - agent_pos[0], \
+            crowd_poss[:, 1] - agent_pos[1]
+        orthog_dist = np.abs(
+            np.outer(x_crowd_rel, self.ray_sin) - np.outer(y_crowd_rel, self.ray_cos)
+        )
+        intersections_mask = orthog_dist <= other_agents[0].radius
+        along_dist = np.outer(x_crowd_rel, self.ray_cos) +\
+            np.outer(y_crowd_rel, self.ray_sin)
+        orthog_to_intersect_dist = np.sqrt(np.maximum(
+            other_agents[0].radius ** 2 - orthog_dist ** 2, 0
+        ))
+        intersect_distances = np.where(
+            intersections_mask, along_dist - orthog_to_intersect_dist, np.inf
+        )
+        min_intersect_distances = np.min(np.where(
+            intersect_distances > 0, intersect_distances, np.inf), axis=0
+        )
+        ray_distances = np.minimum(min_intersect_distances, self.max_range)
 
-        iis, jjs, in_maps = top_down_map.world_coordinates_to_map_indices_vec(beam_coords)
+        ray_velocities = np.zeros(ray_distances.shape)
+        vel_along_all_dir_all_crowd = np.einsum(
+            "ij,ij->i",
+            np.concatenate(
+                [np.array(list(zip(self.ray_cos, self.ray_sin)))] * len(crowd_poss)
+            ),
+            np.repeat(crowd_vels, self.num_beams, axis=0)
+        )
+        vel_along_all_dir_all_crowd *= intersections_mask.flatten()
+        viable_distances = np.where(
+            intersect_distances > 0, intersect_distances, np.inf
+        )
+        crowd_min_dist_idx = np.argmin(  # which one is closer
+            viable_distances, axis=0
+        )
+        vel_along_dir = vel_along_all_dir_all_crowd[
+            crowd_min_dist_idx * self.num_beams + np.arange(self.num_beams)
+        ]
+        intersection_mask_dir = min_intersect_distances != np.inf
+        ray_velocities = vel_along_dir * intersection_mask_dir
+        return np.concatenate([ray_distances, ray_velocities])
 
-        ego_agent_mask = top_down_map.get_agent_mask(host_agent.pos_global_frame, host_agent.radius)
-        lidar_hits = np.logical_and.reduce((top_down_map.map[iis, jjs], np.invert(ego_agent_mask[iis, jjs]), in_maps))
-        lidar_hits_cumsum = np.cumsum(lidar_hits, axis=1)
-        first_hits = np.where(lidar_hits_cumsum == 1)
-
-        ranges = self.max_range*np.ones_like(self.angles)
-        ranges[first_hits[0]] = self.ranges[first_hits[1]]
-
-        if self.num_measurements_made == 0:
-            self.measurement_history[:,:] = ranges
-        else:
-            self.measurement_history = np.roll(self.measurement_history, 1, axis=0)
-            self.measurement_history[0,:] = ranges
-
-        self.num_measurements_made += 1
-
-        if self.debug:
-            in_map_inds = np.where(in_maps)
-            iis_in_map = iis[in_map_inds]
-            jjs_in_map = jjs[in_map_inds]
-            lidar_map = top_down_map.map.copy()
-            lidar_map[iis_in_map, jjs_in_map] = 1
-            plt.figure('lidar')
-            plt.imshow(lidar_map)
-            plt.pause(0.01)
-        return self.measurement_history.copy()
 
     def sense_old(self, agents, agent_index, top_down_map):
         host_agent = agents[agent_index]
