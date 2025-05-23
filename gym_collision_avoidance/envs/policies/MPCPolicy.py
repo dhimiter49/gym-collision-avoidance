@@ -62,7 +62,6 @@ class MPCPolicy(InternalPolicy):
 
     def find_next_action(self, obs, agents, i):
         """
-
         Args:
             obs (dict): this :class:`~gym_collision_avoidance.envs.agent.Agent`
             agents (list): [unused]
@@ -74,15 +73,19 @@ class MPCPolicy(InternalPolicy):
         """
         # prepare observation for MPC
         abs_state = obs["agents_abs_states"]
-        n_crowd = int((len(abs_state) - 3) // 3)  # 3 relates to agent states
-        agent_pos = abs_state[0]
-        agent_vel = abs_state[1]
-        goal_rel = abs_state[2] - agent_pos
-        crowd_poss = abs_state[3:3 + n_crowd].reshape(n_crowd, 2) - agent_pos
-        crowd_vels = abs_state[3 + n_crowd:3 + 2 * n_crowd].reshape(n_crowd, 2)
+        (
+            agent_pos,
+            agent_vel,
+            goal_pos,
+            crowd_poss,
+            crowd_vels,
+            crowd_goal_poss
+        ) = abs_state
+        goal_rel = goal_pos - agent_pos
+        crowd_poss_rel = crowd_poss - agent_pos
 
         walls = np.array([20, 20, 20, 20])
-        obs = (goal_rel, crowd_poss, agent_vel, crowd_vels, walls)
+        obs = (goal_rel, crowd_poss_rel, agent_vel, crowd_vels, walls)
 
         # plan
         plan = self.planner.plan(obs)
@@ -93,8 +96,7 @@ class MPCPolicy(InternalPolicy):
 
         # adapt action to environment
         speed = np.linalg.norm(next_vel)
-        heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
-            self.agent_dir
+        heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) - self.agent_dir
         self.agent_vel = next_vel
         self.agent_dir += heading
         action = np.array([speed, heading])
