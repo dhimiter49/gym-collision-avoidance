@@ -57,6 +57,10 @@ from gym_collision_avoidance.envs.sensors.LaserScanSensor import (
     LaserScanSensor,
 )
 
+from gym_collision_avoidance.envs.sensors.LaserVelScanSensor import (
+    LaserVelScanSensor,
+)
+
 # Sensors
 from gym_collision_avoidance.envs.sensors.OccupancyGridSensor import (
     OccupancyGridSensor,
@@ -202,7 +206,7 @@ def get_my_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
             0.0,
             policy_dict["ProDMP"],
             MyUnicycleDynamics,
-            [AgentsAbsStatesSensor, LaserScanSensor],
+            [AgentsAbsStatesSensor, LaserVelScanSensor],
             0,
             config="ProDMP"
         ),
@@ -216,7 +220,7 @@ def get_my_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
             np.pi,
             policy_dict["MPC"],
             MyUnicycleDynamics,
-            [AgentsAbsStatesSensor, LaserScanSensor],
+            [AgentsAbsStatesSensor, LaserVelScanSensor],
             1,
             config="ProDMP"
         ),

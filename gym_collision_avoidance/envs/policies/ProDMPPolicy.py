@@ -52,7 +52,7 @@ class ProDMPPolicy(InternalPolicy):
 
         """
         # prodmp observation
-        lidar_abs = obs["laserscan"]
+        lidar_abs = obs["laservelscan"]
         abs_state = obs["agents_abs_states"]
         n_crowd = int(len(abs_state) - 3) // 3
         (agent_pos, agent_vel, goal_pos, crowd_poss, crowd_vels, crowd_goal_poss) = (

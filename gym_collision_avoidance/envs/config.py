@@ -206,6 +206,20 @@ class Config(object):
                     (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH), dtype=np.float32
                 ),
             },
+            "laservelscan": {
+                "dtype": np.float32,
+                "size": (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH),
+                "bounds": [0.0, 10.0],
+                "attr": 'get_sensor_data("laservelscan")',
+                "std": 5.0
+                * np.ones(
+                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH), dtype=np.float32
+                ),
+                "mean": 5.0
+                * np.ones(
+                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH), dtype=np.float32
+                ),
+            },
             "is_learning": {
                 "dtype": np.float32,
                 "size": 1,
@@ -229,7 +243,7 @@ class Config(object):
         if not hasattr(self, "STATES_IN_OBS"):
             self.STATES_IN_OBS = [
                 "agents_abs_states",
-                "laserscan",
+                "laservelscan",
             ]
             # self.STATES_IN_OBS = [
             #     "dist_to_goal",
@@ -277,9 +291,8 @@ class ProDMPConfig(Config):
     def __init__(self):
         self.STATES_IN_OBS = [
             "agents_abs_states",
-            "laserscan",
+            "laservelscan",
         ]
-        self.USE_STATIC_MAP = True
         super().__init__()
 
 

@@ -5,10 +5,8 @@ import matplotlib.pyplot as plt
 
 import time
 
-class LaserScanSensor(Sensor):
+class LaserVelScanSensor(Sensor):
     """ 2D LaserScan based on map of the environment (containing static objects and other agents)
-
-    Currently the laserscan parameters are mostly hard-coded...
 
     :param num_beams: (int) how many beams/rays should be in the laserscan
     :param num_to_store: (int) how many past laserscans to stack into one measurement
@@ -23,11 +21,8 @@ class LaserScanSensor(Sensor):
     """
     def __init__(self):
         self.config = ProDMPConfig()
-        if not self.config.USE_STATIC_MAP:
-            print("LaserScanSensor won't work without static map enabled (self.config.USE_STATIC_MAP)")
-            assert(0)
         Sensor.__init__(self)
-        self.name = 'laserscan'
+        self.name = 'laservelscan'
         self.num_beams = self.config.LASERSCAN_LENGTH
         self.num_to_store = self.config.LASERSCAN_NUM_PAST
         self.range_resolution = 2 * np.pi / self.num_beams
@@ -50,13 +45,12 @@ class LaserScanSensor(Sensor):
         if self.debug:
             plt.figure('lidar')
 
-    def sense(self, agents, agent_index):
+    def sense(self, agents, agent_index, top_down_map=None):
         """
         Args:
             agents (list): all agents in the environment
             agent_index (int): index of this agent (the one with this sensor)
-            top_down_map (2D np array): binary image with 0 if that pixel is free space,
-                1 if occupied
+            top_down_map (2D np array): unneessary parameter
 
         Returns:
             measurement_history (np array): (:code:`num_to_store` x :code:`num_beams`) stacked history of laserscans, where each entry is a range in meters of the nearest obstacle at that angle
