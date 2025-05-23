@@ -96,7 +96,11 @@ class MPCPolicy(InternalPolicy):
 
         # adapt action to environment
         speed = np.linalg.norm(next_vel)
-        heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) - self.agent_dir
+        if speed == 0:
+            heading = -self.agent_dir
+        else:
+            heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
+                self.agent_dir
         self.agent_vel = next_vel
         self.agent_dir += heading
         action = np.array([speed, heading])
