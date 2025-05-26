@@ -43,6 +43,7 @@ class MPCPolicy(InternalPolicy):
             kwargs['checkpt_dir'] (str): path to checkpoint
 
         """
+        self.n_crowd = kwargs["n_crowd"]
         mpc_type = MPC_DICT["-v"]  # velocity control
         N = 21
         DT = 0.1
@@ -56,7 +57,7 @@ class MPCPolicy(InternalPolicy):
             const_dist_crowd=0.800001,
             agent_max_vel=3,
             agent_max_acc=1.5,
-            n_crowd=1,
+            n_crowd=self.n_crowd,
         )
 
 
@@ -73,14 +74,18 @@ class MPCPolicy(InternalPolicy):
         """
         # prepare observation for MPC
         abs_state = obs["agents_abs_states"]
+        # see policies/sensors/AgentAbsStatesSensor.py
         (
             agent_pos,
             agent_vel,
             goal_pos,
             crowd_poss,
             crowd_vels,
-            crowd_goal_poss
-        ) = abs_state
+        ) = abs_state[0], \
+            abs_state[1], \
+            abs_state[2], \
+            abs_state[2:2 + self.n_crowd], \
+            abs_state[2 + self.n_crowd: 2 + 2 * self.n_crowd]
         goal_rel = goal_pos - agent_pos
         crowd_poss_rel = crowd_poss - agent_pos
 
