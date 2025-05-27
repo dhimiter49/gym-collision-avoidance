@@ -228,6 +228,42 @@ def get_my_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
     return agents
 
 
+def get_my_testcase_up_to_6_agents():
+    num_agents = np.random.choice(np.arange(2, 7))
+    crowd_poss = np.zeros((num_agents, 2))
+    goal_poss = np.zeros((num_agents, 2))
+    radius = 0.4  # radius of each agent
+    agents = []
+    for i in range(num_agents):
+        while True:
+            sampled_pos = np.random.uniform([-10, -10], [10, 10])
+            sampled_goal_pos = np.random.uniform([-10, -10], [10, 10])
+            # at least two positions are too close
+            no_crowd_collision = np.sum(np.linalg.norm(
+                crowd_poss[:i] - sampled_pos, axis=-1
+            ) < radius * 2) == 0
+            if (np.linalg.norm(sampled_pos - sampled_goal_pos) > radius and
+                    no_crowd_collision):
+                crowd_poss[i] = sampled_pos
+                goal_poss[i] = sampled_goal_pos
+                agents.append(Agent(
+                    sampled_pos[0],
+                    sampled_pos[1],
+                    sampled_goal_pos[0],
+                    sampled_goal_pos[1],
+                    radius,
+                    1.0,
+                    0,
+                    policy_dict["MPC"],
+                    MyUnicycleDynamics,
+                    [AgentsAbsStatesSensor],
+                    1,
+                    config="MPC"
+                ))
+                break
+    return agents
+
+
 def get_testcase_two_agents_laserscanners():
     goal_x = 3
     goal_y = 3

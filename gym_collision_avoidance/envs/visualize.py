@@ -29,7 +29,7 @@ def get_plot_save_dir(plot_save_dir, plot_policy_name, agents=None):
         plot_save_dir = os.path.dirname(os.path.realpath(__file__)) + '/../logs/test_cases/'
         makedirs(plot_save_dir, exist_ok=True)
     if plot_policy_name is None:
-        plot_policy_name = agents[0].policy.str
+        plot_policy_name = '_'.join(a.policy.str for a in agents)
 
     collision_plot_dir = plot_save_dir + "/collisions/"
     makedirs(collision_plot_dir, exist_ok=True)

@@ -233,6 +233,11 @@ class CollisionAvoidanceEnv(gym.Env):
             },
         )
 
+
+    def set_test_case_index(self, index):
+        self.test_case_index = index
+
+
     def reset(self):
         """Resets the environment, re-initializes agents, plots episode (if applicable) and returns an initial observation.
 
