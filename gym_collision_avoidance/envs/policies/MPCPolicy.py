@@ -84,8 +84,8 @@ class MPCPolicy(InternalPolicy):
         ) = abs_state[0], \
             abs_state[1], \
             abs_state[2], \
-            abs_state[2:2 + self.n_crowd], \
-            abs_state[2 + self.n_crowd: 2 + 2 * self.n_crowd]
+            abs_state[3:3 + self.n_crowd], \
+            abs_state[3 + self.n_crowd: 3 + 2 * self.n_crowd]
         goal_rel = goal_pos - agent_pos
         crowd_poss_rel = crowd_poss - agent_pos
 
@@ -106,7 +106,6 @@ class MPCPolicy(InternalPolicy):
         else:
             heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
                 self.agent_dir
-        self.agent_vel = next_vel
         self.agent_dir += heading
         action = np.array([speed, heading])
         return action
