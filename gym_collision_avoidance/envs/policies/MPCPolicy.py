@@ -96,7 +96,7 @@ class MPCPolicy(InternalPolicy):
         plan = self.planner.plan(obs)
 
         # predict next step
-        pred_traj = self.mpc.get_action(plan, obs)
+        pred_traj, _ = self.mpc.get_action(plan, obs)
         next_vel = pred_traj[0]
 
         # adapt action to environment
