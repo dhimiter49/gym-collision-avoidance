@@ -38,13 +38,14 @@ def reset_env(
     test_case_args["prev_agents"] = prev_agents
     agents = test_case_fn(**test_case_args)
     radius_agents = [agent.radius for agent in agents]
-    if prev_agents is None:
+    if prev_agents is None or "MPC" == policy:
         for i, agent in enumerate(agents):
             if "MPC" == policy:
                 agent.policy.initialize_network(
                     n_crowd=num_agents - 1,
                     radius_crowd=np.delete(radius_agents, i),
-                    radius=radius_agents[i]
+                    radius=radius_agents[i],
+                    initial_heading=agent.heading_global_frame
                 )
             if "checkpt_name" in policies[policy]:
                 agent.policy.env = env
