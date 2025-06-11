@@ -44,7 +44,10 @@ class Agent(object):
         else:
             self.config = Config()
 
-        self.policy = policy(initial_heading)
+        if "MPC" in policy.__name__ or "ProDMP" in policy.__name__:
+            self.policy = policy(initial_heading)
+        else:
+            self.policy = policy()
         self.dynamics_model = dynamics_model(self)
         self.sensors = [sensor() for sensor in sensors]
 
