@@ -44,8 +44,8 @@ class MPCPolicy(InternalPolicy):
 
         """
         self.n_crowd = kwargs["n_crowd"]
+        radius = kwargs["radius"]
         radius_crowd = kwargs.get("radius_crowd", None)
-        radius = kwargs.get("radius", None)
         self.agent_dir = kwargs.get("initial_heading", 0)
         mpc_type = MPC_DICT["-v"]  # velocity control
         N = 21

@@ -30,6 +30,7 @@ class ProDMPPolicy(InternalPolicy):
         """
         if "checkpt_name" in kwargs:
             checkpt_name = kwargs["checkpt_name"]
+        self.n_crowd = kwargs["n_crowd"]
 
         store = CustomStore(
             storage_folder="", note=None, exp_id=checkpt_name, new=False, mode="a"
@@ -52,29 +53,16 @@ class ProDMPPolicy(InternalPolicy):
 
         """
         # prodmp observation
-        lidar_abs = obs["laservelscan"]
+        # lidar_abs = obs["laservelscan"]
         abs_state = obs["agents_abs_states"]
-        n_crowd = int(len(abs_state) - 3) // 3
         (agent_pos, agent_vel, goal_pos, crowd_poss, crowd_vels, crowd_goal_poss) = (
             abs_state[0],
             abs_state[1],
             abs_state[2],
-            abs_state[3:3 + n_crowd],
-            abs_state[3 + n_crowd:3 + 2 * n_crowd],
-            abs_state[-n_crowd:],
+            abs_state[3:3 + self.n_crowd],
+            abs_state[3 + self.n_crowd:3 + 2 * self.n_crowd],
+            abs_state[3 + 2 * self.n_crowd:3 + 3 * self.n_crowd],
         )
-        goal_rel = goal_pos - agent_pos
-
-        # prodmp environment setup
-        prodmp_obs = np.concatenate([goal_rel, agent_vel, lidar_abs]).flatten()
-        prodmp_obs = np.concatenate([prodmp_obs, [0]]).flatten()  # time input
-        prodmp_obs = tensorize(prodmp_obs, self.agent.cpu, self.agent.dtype)
-
-
-        # predict
-        prodmp_weights = self.agent.policy(prodmp_obs, train=False)[0]
-        prodmp_weights = [get_numpy(prodmp_weights)]
-
         # hard set environment in order to run ProDMP
         self.prodmp_env.reset()
         self.prodmp_env.venv.envs[0].hard_set_vars(
@@ -87,6 +75,14 @@ class ProDMPPolicy(InternalPolicy):
                 "_crowd_goal_poss": crowd_goal_poss,
             }
         )
+        prodmp_obs = self.prodmp_env.venv.envs[0].get_obs()
+        prodmp_obs = np.concatenate([prodmp_obs, [0]]).flatten()  # time input
+        prodmp_obs = tensorize(prodmp_obs, self.agent.cpu, self.agent.dtype)
+
+        # predict
+        prodmp_weights = self.agent.policy(prodmp_obs, train=False)[0]
+        prodmp_weights = [get_numpy(prodmp_weights)]
+
         _, _, _, infos = self.prodmp_env.step(prodmp_weights)
         next_vel = infos[0]["step_actions"][0]
 

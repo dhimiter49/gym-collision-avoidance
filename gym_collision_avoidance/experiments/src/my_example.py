@@ -34,8 +34,8 @@ def main():
 
     # ProDMP cehckpoint
     checkpt_name=(
-        "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/"
-        "mp_const_newest/131k_131k-mpc/7b41de28-0966-45e4-9ead-0f971ef1b0c2_/"
+        "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
+        "mp_config/CrowdNavigationConstLiDARVel-v0/bac49ea6-785f-4bdb-b368-c2954065a496/"
     )
 
     num_episodes = 10
@@ -44,7 +44,7 @@ def main():
         agents = tc.get_my_testcase_up_to_6_agents()
         [
             agent.policy.initialize_network(
-                checkpt_name=checkpt_name, n_crowd=len(agents) - 1
+                checkpt_name=checkpt_name, n_crowd=len(agents) - 1, radius=0.4
             )
             # agent.policy.initialize_network()
             for agent in agents
