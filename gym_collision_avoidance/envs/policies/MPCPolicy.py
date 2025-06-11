@@ -44,6 +44,8 @@ class MPCPolicy(InternalPolicy):
 
         """
         self.n_crowd = kwargs["n_crowd"]
+        radius_crowd = kwargs.get("radius_crowd", None)
+        radius = kwargs.get("radius", None)
         mpc_type = MPC_DICT["-v"]  # velocity control
         N = 21
         DT = 0.1
@@ -53,11 +55,13 @@ class MPCPolicy(InternalPolicy):
             mpc_type,
             horizon=N,
             dt=DT,
-            physical_space=0.4,
-            const_dist_crowd=0.800001,
+            physical_space=radius,
+            radius_crowd=radius_crowd,
+            const_dist_crowd=0.810001,
             agent_max_vel=3,
             agent_max_acc=1.5,
             n_crowd=self.n_crowd,
+            uncertainty="vel"
         )
 
 
@@ -112,5 +116,5 @@ class MPCPolicy(InternalPolicy):
 
 
 if __name__ == '__main__':
-    policy = MPCPolicy()
+    policy = MPCPolicy(0)
     policy.initialize_network()

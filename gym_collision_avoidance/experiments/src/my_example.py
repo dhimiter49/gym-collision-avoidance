@@ -53,11 +53,12 @@ def main():
         env.set_agents(agents)
         env.set_test_case_index(i)
 
-        obs = env.reset()  # Get agents' initial observations
+        _ = env.reset()  # Get agents' initial observations
 
         # Repeatedly send actions to the environment based on agents' observations
         num_steps = 100
-        for j in tqdm(range(num_steps)):
+        returns = 0
+        for _ in tqdm(range(num_steps)):
             # Query the external agents' policies
             # e.g., actions[0] = external_policy(dict_obs[0])
             actions = {}
@@ -67,12 +68,13 @@ def main():
             # ==> no need to supply actions for internal agents here
 
             # Run a simulation step (check for collisions, move sim agents)
-            obs, rewards, terminated, truncated, which_agents_done = env.step(
+            _, rewards, terminated, _, _ = env.step(
                 actions
             )
+            returns += rewards
 
             if terminated:
-                print("All agents finished!")
+                print("All agents finished! Return of: ", returns)
                 break
         env.reset()
 

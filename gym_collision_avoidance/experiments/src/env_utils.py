@@ -489,4 +489,8 @@ policies = {
         "checkpt_name": "stage2.pth",
         "sensors": ["other_agents_states", "laserscan"],
     },
+    "MPC": {
+        "policy": "MPC",
+        "sensors": ["agents_abs_states"],
+    },
 }
