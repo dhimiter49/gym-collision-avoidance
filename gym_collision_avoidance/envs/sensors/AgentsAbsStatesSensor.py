@@ -39,6 +39,9 @@ class AgentsAbsStatesSensor(Sensor):
         crowd_vels = np.array([a.vel_global_frame for a in other_agents])
         crowd_goals = np.array([a.goal_global_frame for a in other_agents])
 
+        all_agents_obs = np.zeros(
+            (self.max_num_other_agents_observed * 6 // 2, 2)
+        )
         obs = np.concatenate([
             [agent_pos],
             [agent_vel],
@@ -47,5 +50,6 @@ class AgentsAbsStatesSensor(Sensor):
             crowd_vels,
             crowd_goals,
         ])
+        all_agents_obs[:len(obs)] = obs
 
-        return obs
+        return all_agents_obs

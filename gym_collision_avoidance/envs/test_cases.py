@@ -103,6 +103,7 @@ except ModuleNotFoundError:
 
 sensor_dict = {
     "other_agents_states": OtherAgentsStatesSensor,
+    "agents_abs_states": AgentsAbsStatesSensor,
     "laserscan": LaserScanSensor,
     # 'other_agents_states_encoded': OtherAgentsStatesSensorEncode,
 }

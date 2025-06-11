@@ -180,16 +180,16 @@ class Config(object):
             },
             "agents_abs_states": {
                 "dtype": np.float32,
-                "size": (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 7),
+                "size": (self.MAX_NUM_OTHER_AGENTS_OBSERVED * 6 // 2, 2),
                 "bounds": [-np.inf, np.inf],
                 "attr": 'get_sensor_data("agents_abs_states")',
                 "std": np.tile(
-                    np.array([5.0, 5.0, 1.0, 1.0, 1.0, 5.0, 1.0], dtype=np.float32),
-                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 1),
+                    np.array([1.0, 1.0], dtype=np.float32),
+                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED * 6 // 2, 1),
                 ),
                 "mean": np.tile(
-                    np.array([0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0], dtype=np.float32),
-                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED, 1),
+                    np.array([0.0, 0.0], dtype=np.float32),
+                    (self.MAX_NUM_OTHER_AGENTS_OBSERVED * 6 // 2, 1),
                 ),
             },
             "laserscan": {
