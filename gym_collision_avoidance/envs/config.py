@@ -246,6 +246,17 @@ class Config(object):
                 "laservelscan",
             ]
             # self.STATES_IN_OBS = [
+            #     "is_learning",
+            #     "num_other_agents",
+            #     "dist_to_goal",
+            #     "heading_ego_frame",
+            #     "pref_speed",
+            #     "radius",
+            #     "other_agents_states",
+            #     "agents_abs_states",
+            #     "laservelscan",
+            # ]
+            # self.STATES_IN_OBS = [
             #     "dist_to_goal",
             #     "radius",
             #     "heading_ego_frame",
