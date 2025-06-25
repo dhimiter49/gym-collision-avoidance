@@ -229,16 +229,17 @@ def get_my_testcase_two_agents(policies=["learning", "GA3C_CADRL"]):
     return agents
 
 
-def get_my_testcase_up_to_6_agents():
+def get_my_testcase_up_to_6_agents(seed=0):
     num_agents = np.random.choice(np.arange(2, 7))
+    np.random.seed(seed)
     crowd_poss = np.zeros((num_agents, 2))
     goal_poss = np.zeros((num_agents, 2))
     radius = 0.4  # radius of each agent
     agents = []
     for i in range(num_agents):
         while True:
-            sampled_pos = np.random.uniform([-10, -10], [10, 10])
-            sampled_goal_pos = np.random.uniform([-10, -10], [10, 10])
+            sampled_pos = np.random.uniform([-7.5, -7.5], [7.5, 7.5])
+            sampled_goal_pos = np.random.uniform([-7.5, -7.5], [7.5, 7.5])
             # at least two positions are too close
             no_crowd_collision = np.sum(np.linalg.norm(
                 crowd_poss[:i] - sampled_pos, axis=-1

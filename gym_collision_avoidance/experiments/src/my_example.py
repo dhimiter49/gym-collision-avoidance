@@ -41,7 +41,7 @@ def main():
     num_episodes = 10
     for i in tqdm(range(num_episodes)):
         # Set agent configuration (start/goal pos, radius, size, policy)
-        agents = tc.get_my_testcase_up_to_6_agents()
+        agents = tc.get_my_testcase_up_to_6_agents(seed=i)
         [
             agent.policy.initialize_network(
                 checkpt_name=checkpt_name, n_crowd=len(agents) - 1, radius=0.4
