@@ -178,7 +178,8 @@ def draw_agents(agents, circles_along_traj, ax, last_index=-1):
                 main_env = main_env.env
             plt.plot(main_env.pred_current_trajectory[:10, 0],
                      main_env.pred_current_trajectory[:10, 1],
-                     color=plt_color, ls=':', linewidth=2)
+                     color=np.clip(np.array(plt_color) - 0.2, 0., 1.),
+                     ls='-', linewidth=4)
 
         if circles_along_traj:
             plt.plot(agent.global_state_history[:agent.step_num+last_index+1, 1],
@@ -220,7 +221,8 @@ def draw_agents(agents, circles_along_traj, ax, last_index=-1):
                 c = rgba2rgb(plt_color+[float(alpha)])
                 ax.text(agent.global_state_history[ind, 1]-0.15,
                         agent.global_state_history[ind, 2]+y_text_offset,
-                        '%.1f' % agent.global_state_history[ind, 0], color=c)
+                        '%.1f' % agent.global_state_history[ind, 0],
+                        color=c, fontsize="xx-small")
             # Also display circle at agent position at end of trajectory
             ind = agent.step_num + last_index
             alpha = 1 - \
@@ -233,7 +235,7 @@ def draw_agents(agents, circles_along_traj, ax, last_index=-1):
             ax.text(agent.global_state_history[ind, 1] - 0.15,
                     agent.global_state_history[ind, 2] + y_text_offset,
                     '%.1f' % agent.global_state_history[ind, 0],
-                    color=plt_color)
+                    color=plt_color, fontsize="xx-small")
 
             # if hasattr(agent.policy, 'deltaPos'):
             #     arrow_start = agent.global_state_history[ind, 1:3]

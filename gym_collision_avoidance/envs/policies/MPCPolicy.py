@@ -48,10 +48,12 @@ class MPCPolicy(InternalPolicy):
         radius_crowd = kwargs.get("radius_crowd", None)
         self.agent_dir = kwargs.get("initial_heading", 0)
         mpc_type = MPC_DICT["-v"]  # velocity control
-        N = 21
+        N = 10
         DT = 0.1
+        max_vel = 1.0
+        max_acc = 10.0
 
-        self.planner = Plan(N, DT, 3)
+        self.planner = Plan(N, DT, max_vel)
         self.mpc = get_mpc(
             mpc_type,
             horizon=N,
@@ -59,8 +61,8 @@ class MPCPolicy(InternalPolicy):
             physical_space=radius,
             radius_crowd=radius_crowd,
             const_dist_crowd=0.810001,
-            agent_max_vel=3,
-            agent_max_acc=1.5,
+            agent_max_vel=max_vel,
+            agent_max_acc=max_acc,
             n_crowd=self.n_crowd,
             uncertainty="vel"
         )
