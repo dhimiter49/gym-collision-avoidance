@@ -52,6 +52,7 @@ class MPCPolicy(InternalPolicy):
         DT = 0.1
         max_vel = 1.0
         max_acc = 10.0
+        stability_coeff = 0.15
 
         self.planner = Plan(N, DT, max_vel)
         self.mpc = get_mpc(
@@ -60,11 +61,12 @@ class MPCPolicy(InternalPolicy):
             dt=DT,
             physical_space=radius,
             radius_crowd=radius_crowd,
-            const_dist_crowd=0.810001,
+            const_dist_crowd=0.815001,
             agent_max_vel=max_vel,
             agent_max_acc=max_acc,
             n_crowd=self.n_crowd,
-            uncertainty="vel"
+            uncertainty="dist",
+            stability_coeff=stability_coeff,
         )
 
 

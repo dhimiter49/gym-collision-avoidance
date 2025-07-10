@@ -47,6 +47,15 @@ def reset_env(
                     radius=radius_agents[i],
                     initial_heading=agent.heading_global_frame
                 )
+            if "ProDMP" == policy:
+                checkpt_name=(
+                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
+                    "mp_config/CrowdNavigationConstLiDARVel-v0/f253ab97-6023-4690-97fd-da6038fed01b/"
+                )
+                agent.policy.initialize_network(
+                    checkpt_name=checkpt_name,
+                    n_crowd=num_agents - 1,
+                )
             if "checkpt_name" in policies[policy]:
                 agent.policy.env = env
                 agent.policy.initialize_network(**policies[policy])

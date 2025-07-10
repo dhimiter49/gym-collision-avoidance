@@ -493,4 +493,8 @@ policies = {
         "policy": "MPC",
         "sensors": ["agents_abs_states"],
     },
+    "ProDMP": {
+        "policy": "ProDMP",
+        "sensors": ["agents_abs_states", "laservelscan"],
+    },
 }

@@ -105,6 +105,7 @@ sensor_dict = {
     "other_agents_states": OtherAgentsStatesSensor,
     "agents_abs_states": AgentsAbsStatesSensor,
     "laserscan": LaserScanSensor,
+    "laservelscan": LaserVelScanSensor,
     # 'other_agents_states_encoded': OtherAgentsStatesSensorEncode,
 }
 
@@ -243,7 +244,7 @@ def get_my_testcase_up_to_6_agents(seed=0):
             # at least two positions are too close
             no_crowd_collision = np.sum(np.linalg.norm(
                 crowd_poss[:i] - sampled_pos, axis=-1
-            ) < radius * 2) == 0
+            ) < radius * 2 + 0.1) == 0
             if (np.linalg.norm(sampled_pos - sampled_goal_pos) > radius and
                     no_crowd_collision):
                 crowd_poss[i] = sampled_pos

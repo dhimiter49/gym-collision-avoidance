@@ -79,7 +79,6 @@ class ProDMPPolicy(InternalPolicy):
         prodmp_obs = np.concatenate([prodmp_obs, [0]]).flatten()  # time input
         prodmp_obs = tensorize(prodmp_obs, self.agent.cpu, self.agent.dtype)
 
-        # predict
         prodmp_weights = self.agent.policy(prodmp_obs, train=False)[0]
         prodmp_weights = [get_numpy(prodmp_weights)]
 

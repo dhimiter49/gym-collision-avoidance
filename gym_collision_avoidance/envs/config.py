@@ -208,16 +208,16 @@ class Config(object):
             },
             "laservelscan": {
                 "dtype": np.float32,
-                "size": (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH),
+                "size": (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH * 2),
                 "bounds": [0.0, 10.0],
                 "attr": 'get_sensor_data("laservelscan")',
                 "std": 5.0
                 * np.ones(
-                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH), dtype=np.float32
+                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH * 2), dtype=np.float32
                 ),
                 "mean": 5.0
                 * np.ones(
-                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH), dtype=np.float32
+                    (self.LASERSCAN_NUM_PAST, self.LASERSCAN_LENGTH * 2), dtype=np.float32
                 ),
             },
             "is_learning": {
