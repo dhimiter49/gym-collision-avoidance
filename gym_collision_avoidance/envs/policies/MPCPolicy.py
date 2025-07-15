@@ -61,7 +61,7 @@ class MPCPolicy(InternalPolicy):
             dt=DT,
             physical_space=radius,
             radius_crowd=radius_crowd,
-            const_dist_crowd=0.815001,
+            const_dist_crowd=0.81001,
             agent_max_vel=max_vel,
             agent_max_acc=max_acc,
             n_crowd=self.n_crowd,

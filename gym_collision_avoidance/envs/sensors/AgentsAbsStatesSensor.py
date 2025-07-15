@@ -52,4 +52,4 @@ class AgentsAbsStatesSensor(Sensor):
         ])
         all_agents_obs[:len(obs)] = obs
 
-        return all_agents_obs
+        return np.float32(all_agents_obs)

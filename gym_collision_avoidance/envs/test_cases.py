@@ -110,6 +110,7 @@ sensor_dict = {
 }
 
 dynamics_dict = {
+    "myunicycle": MyUnicycleDynamics,
     "unicycle": UnicycleDynamics,
     "external": ExternalDynamics,
 }
