@@ -86,16 +86,16 @@ class ProDMPPolicy(InternalPolicy):
         next_vel = infos[0]["step_actions"][0]
 
         # adapt action to environment
-        speed = np.linalg.norm(next_vel)
-        if speed == 0:
-            heading = -self.agent_dir
-        else:
-            heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
-                self.agent_dir
-        self.agent_vel = next_vel
-        self.agent_dir += heading
-        action = np.array([speed, heading])
-        return action
+        # speed = np.linalg.norm(next_vel)
+        # if speed == 0:
+        #     heading = -self.agent_dir
+        # else:
+        #     heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
+        #         self.agent_dir
+        # self.agent_vel = next_vel
+        # self.agent_dir += heading
+        # action = np.array([speed, heading])
+        return next_vel
 
 
 if __name__ == "__main__":
