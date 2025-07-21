@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 import time
 
-np.set_printoptions(precision=3, suppress=True)
+# np.set_printoptions(precision=3, suppress=True)
 
 class Actions():
     # Define 11 choices of actions to be:

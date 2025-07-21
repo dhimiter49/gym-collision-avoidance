@@ -48,11 +48,11 @@ class MPCPolicy(InternalPolicy):
         radius_crowd = kwargs.get("radius_crowd", None)
         self.agent_dir = kwargs.get("initial_heading", 0)
         mpc_type = MPC_DICT["-v"]  # velocity control
-        N = 10
+        N = 5
         DT = 0.1
         max_vel = 1.0
         max_acc = 10.0
-        stability_coeff = 0.15
+        stability_coeff = 0.1
 
         self.planner = Plan(N, DT, max_vel)
         self.mpc = get_mpc(
@@ -98,7 +98,7 @@ class MPCPolicy(InternalPolicy):
         goal_rel = goal_pos - agent_pos
         crowd_poss_rel = crowd_poss - agent_pos
 
-        walls = np.array([20, 20, 20, 20])
+        walls = np.array([20., 20., 20., 20.])
         obs = (goal_rel, crowd_poss_rel, agent_vel, crowd_vels, walls)
 
         # plan
@@ -109,15 +109,15 @@ class MPCPolicy(InternalPolicy):
         next_vel = pred_traj[0]
 
         # adapt action to environment
-        speed = np.linalg.norm(next_vel)
-        if speed == 0:
-            heading = -self.agent_dir
-        else:
-            heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
-                self.agent_dir
-        self.agent_dir += heading
-        action = np.array([speed, heading])
-        return action
+        # speed = np.linalg.norm(next_vel)
+        # if speed == 0:
+        #     heading = -self.agent_dir
+        # else:
+        #     heading = np.sign(next_vel[1]) * np.arccos(next_vel[0] / speed) -\
+        #         self.agent_dir
+        # self.agent_dir += heading
+        # action = np.array([speed, heading])
+        return next_vel
 
 
 if __name__ == '__main__':
