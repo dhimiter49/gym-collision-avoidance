@@ -64,6 +64,8 @@ class MPCPolicy(InternalPolicy):
             const_dist_crowd=0.81001,
             agent_max_vel=max_vel,
             agent_max_acc=max_acc,
+            crowd_max_vel=max_vel,
+            crowd_max_acc=max_acc,
             n_crowd=self.n_crowd,
             uncertainty="dist",
             stability_coeff=stability_coeff,
@@ -99,7 +101,7 @@ class MPCPolicy(InternalPolicy):
         crowd_poss_rel = crowd_poss - agent_pos
 
         walls = np.array([20., 20., 20., 20.])
-        obs = (goal_rel, crowd_poss_rel, agent_vel, crowd_vels, walls)
+        obs = (goal_rel, crowd_poss_rel, agent_vel, crowd_vels, walls, None)
 
         # plan
         plan = self.planner.plan(obs)
