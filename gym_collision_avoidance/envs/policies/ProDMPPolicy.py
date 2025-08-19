@@ -31,6 +31,7 @@ class ProDMPPolicy(InternalPolicy):
         if "checkpt_name" in kwargs:
             checkpt_name = kwargs["checkpt_name"]
         self.n_crowd = kwargs["n_crowd"]
+        radius_crowd = kwargs.get("radius_crowd", None)
 
         store = CustomStore(
             storage_folder="", note=None, exp_id=checkpt_name, new=False, mode="a"

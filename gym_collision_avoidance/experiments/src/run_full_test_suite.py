@@ -48,9 +48,18 @@ def reset_env(
                     initial_heading=agent.heading_global_frame
                 )
             if "ProDMP" == policy:
-                checkpt_name=(
+                checkpt_name = (
                     "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
-                    "mp_config/CrowdNavigationConstLiDARVel-v0/f253ab97-6023-4690-97fd-da6038fed01b/"
+                    "mp_config/CrowdNavigationConstLiDARVel-v0/32247521-2426-4364-86c5-02ca64fe6b0b/"
+                )
+                agent.policy.initialize_network(
+                    checkpt_name=checkpt_name,
+                    n_crowd=num_agents - 1,
+                )
+            if "SAC" == policy:
+                checkpt_name = (
+                    "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationConstLiDARVel-v0"
+                    "/sac/12_08_2025-10:55:14-3515/model_sac/rl_model_50000000_steps.zip"
                 )
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,

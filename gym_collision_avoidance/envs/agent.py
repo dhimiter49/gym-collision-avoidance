@@ -41,10 +41,13 @@ class Agent(object):
             self.config = MPCConfig()
         elif config == "ProDMP":
             self.config = ProDMPConfig()
+        elif config == "SAC":
+            self.config = SACConfig()
         else:
             self.config = Config()
 
-        if "MPC" in policy.__name__ or "ProDMP" in policy.__name__:
+        if "ProDMP" in policy.__name__ or "MPC" in policy.__name__ or\
+           "SAC" in policy.__name__:
             self.policy = policy(initial_heading)
         else:
             self.policy = policy()
@@ -130,6 +133,9 @@ class Agent(object):
         self.was_at_goal_already = False
         self.was_in_collision_already = False
         self.in_collision = False
+        self.in_collision_speed = 0.0
+        self.in_collision_agent_speed = 0.0
+        self.in_agent_speed = 0.0
         self.ran_out_of_time = False
 
         self.num_states_in_history = int(1.2*self.time_remaining_to_reach_goal / self.dt_nominal)

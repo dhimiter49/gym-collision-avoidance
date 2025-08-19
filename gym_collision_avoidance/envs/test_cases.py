@@ -50,6 +50,7 @@ from gym_collision_avoidance.envs.policies.NonCooperativePolicy import (
 )
 from gym_collision_avoidance.envs.policies.ProDMPPolicy import ProDMPPolicy
 from gym_collision_avoidance.envs.policies.MPCPolicy import MPCPolicy
+from gym_collision_avoidance.envs.policies.SACPolicy import SACPolicy
 
 # Policies
 from gym_collision_avoidance.envs.policies.StaticPolicy import StaticPolicy
@@ -91,6 +92,7 @@ policy_dict = {
     "CADRL": CADRLPolicy,
     "ProDMP": ProDMPPolicy,
     "MPC": MPCPolicy,
+    "SAC": SACPolicy,
 }
 
 # pypi version of pkg doesn't have RVO installed
