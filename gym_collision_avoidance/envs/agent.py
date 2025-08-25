@@ -53,6 +53,11 @@ class Agent(object):
             self.policy = policy()
         self.dynamics_model = dynamics_model(self)
         self.sensors = [sensor() for sensor in sensors]
+        for sensor in self.sensors:
+            sensor.set_args({
+                "agent_sorting_method": "closest_last",
+                "max_num_other_agents_observed": 19
+            })
 
         # Store past selected actions
         self.chosen_action_dict = {}
@@ -124,7 +129,8 @@ class Agent(object):
             self.time_remaining_to_reach_goal = self.config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
         else:
             self.time_remaining_to_reach_goal = self.config.MAX_TIME_RATIO*self.straight_line_time_to_reach_goal
-        self.time_remaining_to_reach_goal = max(self.time_remaining_to_reach_goal, self.dt_nominal)
+        # self.time_remaining_to_reach_goal = max(self.time_remaining_to_reach_goal, self.dt_nominal)
+        self.time_remaining_to_reach_goal = 20
         self.t = 0.0
 
         self.step_num = 0
