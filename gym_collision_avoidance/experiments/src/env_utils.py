@@ -64,8 +64,8 @@ def run_episode(env):
         [a.t - a.straight_line_time_to_reach_goal for a in agents]
     )
     collision = np.array(np.any([a.in_collision for a in agents])).tolist()
-    collision_speed = np.array(np.any([a.in_collision_speed for a in agents])).tolist()
-    collision_agent_speed = np.array(np.any([a.in_collision_agent_speed for a in agents])).tolist()
+    collision_speed = np.array([a.in_collision_speed for a in agents]).tolist()
+    collision_agent_speed = np.array([a.in_collision_agent_speed for a in agents]).tolist()
     all_at_goal = np.array(np.all([a.is_at_goal for a in agents])).tolist()
     any_stuck = np.array(
         np.any([not a.in_collision and not a.is_at_goal for a in agents])

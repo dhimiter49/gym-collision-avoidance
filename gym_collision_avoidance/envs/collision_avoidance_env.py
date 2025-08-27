@@ -425,10 +425,12 @@ class CollisionAvoidanceEnv(gym.Env):
                 # bumps into them
                 if agent.was_in_collision_already is False:
                     if collision_with_agent[i]:
+                        idxs = np.where(collision_with_agent)[0][:2]
                         rewards[i] = self.reward_collision_with_agent
                         agent.in_collision = True
                         agent.in_collision_speed = np.linalg.norm(
-                            agent.vel_global_frame - self.agents[i].vel_global_frame
+                            self.agents[idxs[0]].vel_global_frame -
+                            self.agents[idxs[1]].vel_global_frame
                         )
                         agent.in_collision_agent_speed = np.linalg.norm(
                             agent.vel_global_frame

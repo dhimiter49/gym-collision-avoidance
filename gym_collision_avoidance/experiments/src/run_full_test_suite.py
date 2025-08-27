@@ -49,8 +49,11 @@ def reset_env(
                 )
             if "ProDMP" == policy:
                 checkpt_name = (
-                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
-                    "mp_config/CrowdNavigationConstLiDARVel-v0/32247521-2426-4364-86c5-02ca64fe6b0b/"
+                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/const_lidar_vel/"
+                    # "prodmp_mpc_cnn/scale8/34686aa4-7042-4853-bf2b-bd148d3b3731_"
+                    "home/dhimiter/Documents/RAM/TrustRegionProjections/"
+                    "results/mp_config/CrowdNavigationORCALiDARVel-v0/"
+                    "dcd8c1df-434c-4761-b304-5c3a6e470f7d/"
                 )
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,
@@ -58,8 +61,8 @@ def reset_env(
                 )
             if "SAC" == policy:
                 checkpt_name = (
-                    "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationConstLiDARVel-v0"
-                    "/sac/12_08_2025-10:55:14-3515/model_sac/rl_model_50000000_steps.zip"
+                    "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationORCALiDARVel-v0/"
+                        "/sac/19_08_2025-10:49:18-7205/model_sac/rl_model_50000000_steps.zip"
                 )
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,
