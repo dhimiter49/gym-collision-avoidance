@@ -49,10 +49,11 @@ def reset_env(
                 )
             if "ProDMP" == policy:
                 checkpt_name = (
-                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/const_lidar_vel/"
-                    # "prodmp_mpc_cnn/scale8/34686aa4-7042-4853-bf2b-bd148d3b3731_"
-                    "home/dhimiter/Documents/RAM/TrustRegionProjections/"
-                    "results/mp_config/CrowdNavigationORCALiDARVel-v0/"
+                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/""
+                    # "const_lidar_vel/prodmp_mpc_cnn/scale8/"
+                    # "34686aa4-7042-4853-bf2b-bd148d3b3731"
+                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
+                    "mp_config/CrowdNavigationORCALiDARVel-v0/"
                     "dcd8c1df-434c-4761-b304-5c3a6e470f7d/"
                 )
                 agent.policy.initialize_network(

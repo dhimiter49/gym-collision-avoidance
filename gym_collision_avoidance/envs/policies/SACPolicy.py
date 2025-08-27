@@ -50,9 +50,15 @@ class SACPolicy(InternalPolicy):
         steps = checkpt_name.split("/")[-1].split("_")[2]
         env_path = "/".join(checkpt_name.split("/")[:level]) +\
             "/rl_model_vecnormalize_" + steps + "_steps.pkl"
-        env_id = "fancy/CrowdNavigationConstLiDARVel-v0"
+        path_dirs = checkpt_name.split("/")
+        env_name = path_dirs[
+            np.where(list("Navigation" in dir for dir in path_dirs))[0][0]
+        ]
+        env_id = "fancy/" + env_name
         env_fns = [make_env(env_id) for _ in range(1)]
         self.env = VecNormalize.load(env_path, DummyVecEnv(env_fns))
+        self.env.env_method("set_num_crowd", self.n_crowd)
+        self.env.env_method("set_wxh", 50, 50)
         self.env.training = False
         self.env.norm_reward = False
         self.model = sbl.SAC.load(checkpt_name, env=self.env)

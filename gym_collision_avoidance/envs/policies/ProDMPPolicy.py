@@ -40,6 +40,11 @@ class ProDMPPolicy(InternalPolicy):
             store, train_steps=None, checkpoint_iteration=-1, testing=True
         )
         self.prodmp_env = self.agent.sampler.envs_test
+        self.prodmp_env.env_method("set_num_crowd", self.n_crowd)
+        self.prodmp_env.env_method("set_wxh", 50, 50)
+        # if radius_crowd is not None:
+        #     self.prodmp_env.venv.envs[0].tracking_controller.min_dist_crowd = radius_crowd
+        # self.prodmp_env.venv.envs[0].tracking_controller.set_uncertainty("dist")
 
 
     def find_next_action(self, obs, agents, i):
