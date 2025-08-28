@@ -45,6 +45,7 @@ class SACPolicy(InternalPolicy):
             kwargs['checkpt_dir'] (str): path to checkpoint
 
         """
+        self.n_crowd = kwargs["n_crowd"]
         checkpt_name = kwargs["checkpt_name"]
         level = checkpt_name.count("/")
         steps = checkpt_name.split("/")[-1].split("_")[2]

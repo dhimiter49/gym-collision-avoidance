@@ -63,8 +63,10 @@ def reset_env(
                 )
             if "SAC" == policy:
                 checkpt_name = (
+                    # "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationConstLiDARVel-v0/"
+                    # "/sac/12_08_2025-10:55:14-4869/model_sac/rl_model_50000000_steps.zip"
                     "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationORCALiDARVel-v0/"
-                        "/sac/19_08_2025-10:49:18-7205/model_sac/rl_model_50000000_steps.zip"
+                    "/sac/19_08_2025-10:49:18-7205/model_sac/rl_model_50000000_steps.zip"
                 )
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,

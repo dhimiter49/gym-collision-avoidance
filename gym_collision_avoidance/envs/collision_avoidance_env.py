@@ -428,6 +428,7 @@ class CollisionAvoidanceEnv(gym.Env):
                         idxs = np.where(collision_with_agent)[0][:2]
                         rewards[i] = self.reward_collision_with_agent
                         agent.in_collision = True
+                        agent.in_collision_flag = True
                         agent.in_collision_speed = np.linalg.norm(
                             self.agents[idxs[0]].vel_global_frame -
                             self.agents[idxs[1]].vel_global_frame

@@ -139,6 +139,7 @@ class Agent(object):
         self.was_at_goal_already = False
         self.was_in_collision_already = False
         self.in_collision = False
+        self.in_collision_flag = False
         self.in_collision_speed = 0.0
         self.in_collision_agent_speed = 0.0
         self.in_agent_speed = 0.0
