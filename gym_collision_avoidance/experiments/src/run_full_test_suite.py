@@ -1,6 +1,6 @@
 import os
+import sys
 import pickle
-import time
 
 import numpy as np
 import pandas as pd
@@ -26,10 +26,11 @@ def reset_env(
     policies,
     policy,
     prev_agents,
+    exp_name
 ):
     test_case_args["num_agents"] = num_agents
     test_case_args["test_case_index"] = test_case
-    env.unwrapped.plot_policy_name = policy
+    env.unwrapped.plot_policy_name = policy + exp_name
     test_case_args["policies"] = policies[policy]["policy"]
     if "sensors" in policies[policy]:
         test_case_args["agents_sensors"] = policies[policy]["sensors"]
@@ -49,12 +50,12 @@ def reset_env(
                 )
             if "ProDMP" == policy:
                 checkpt_name = (
-                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/""
-                    # "const_lidar_vel/prodmp_mpc_cnn/scale8/"
-                    # "34686aa4-7042-4853-bf2b-bd148d3b3731"
-                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
-                    "mp_config/CrowdNavigationORCALiDARVel-v0/"
-                    "dcd8c1df-434c-4761-b304-5c3a6e470f7d/"
+                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/"
+                    "const_lidar_vel/prodmp_mpc_cnn/scale8/"
+                    "34686aa4-7042-4853-bf2b-bd148d3b3731"
+                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
+                    # "mp_config/CrowdNavigationORCALiDARVel-v0/"
+                    # "dcd8c1df-434c-4761-b304-5c3a6e470f7d/"
                 )
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,
@@ -82,6 +83,9 @@ def reset_env(
 
 
 def main():
+    exp_name = "" if "-n" not in sys.argv else sys.argv[sys.argv.index("-n") + 1]
+    if exp_name != "":
+        exp_name = "_" + exp_name
     np.random.seed(0)
 
     test_case_fn = tc.full_test_suite
@@ -133,11 +137,12 @@ def main():
                         policies,
                         policy,
                         prev_agents,
+                        exp_name
                     )
                     episode_stats, prev_agents = run_episode(env)
                     df = store_stats(
                         df,
-                        {"test_case": test_case, "policy_id": policy},
+                        {"test_case": test_case, "policy_id": policy + exp_name},
                         episode_stats,
                     )
                     ########################################
@@ -153,7 +158,9 @@ def main():
                         num_agents=num_agents
                     )
                     os.makedirs(file_dir, exist_ok=True)
-                    log_filename = file_dir + "/stats_{}.p".format(policy)
+                    log_filename = file_dir + "/stats_{}.p".format(
+                        policy + exp_name
+                    )
                     # log_filename = file_dir+'/stats_{}_{}.p'.format(policy, now.strftime("%m_%d_%Y__%H_%M_%S"))
                     df.to_pickle(log_filename)
 

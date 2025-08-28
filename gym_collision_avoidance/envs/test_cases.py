@@ -644,8 +644,10 @@ def cadrl_test_case_to_agents(
         py = agent[1]
         gx = agent[2]
         gy = agent[3]
-        pref_speed = agent[4]
-        radius = agent[5]
+        # pref_speed = agent[4]
+        pref_speed = 1.0
+        # radius = agent[5]
+        radius = 0.4
         if Config.EVALUATE_MODE:
             # initial heading is pointed toward the goal
             vec_to_goal = np.array([gx, gy]) - np.array([px, py])
