@@ -37,6 +37,10 @@ def reset_env(
     else:
         test_case_args["agents_sensors"] = []
     test_case_args["prev_agents"] = prev_agents
+    if "MPC" == policy or "ProDMP" == policy or "SAC" == policy:
+        test_case_args["agents_dynamics"] = "myunicycle"
+    else:
+        test_case_args["agents_dynamics"] = "unicycle"
     agents = test_case_fn(**test_case_args)
     radius_agents = [agent.radius for agent in agents]
     if prev_agents is None or "MPC" == policy:
