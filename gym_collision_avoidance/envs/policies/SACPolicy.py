@@ -33,6 +33,7 @@ class SACPolicy(InternalPolicy):
         InternalPolicy.__init__(self, str="SAC")
         self.agent_vel = np.zeros(2)
         self.agent_dir = initial_heading
+        self.AGENT_MAX_VEL = 1.
 
 
     def initialize_network(self, **kwargs):
@@ -102,6 +103,9 @@ class SACPolicy(InternalPolicy):
         obs = self.env.normalize_obs(self.env.env_method("get_obs")[0])
         next_vel, _ = self.model.predict(obs)
 
+        vel_norm = np.linalg.norm(next_vel)
+        if vel_norm > self.AGENT_MAX_VEL:
+            next_vel *= self.AGENT_MAX_VEL / vel_norm
         return next_vel
 
 
