@@ -16,6 +16,7 @@ class ProDMPPolicy(InternalPolicy):
         self.agent_vel = np.zeros(2)
         self.agent_dir = initial_heading
         self.lidar_angle = 2 * np.pi / 40
+        self.breaking_flag = False
 
 
     def initialize_network(self, **kwargs):
@@ -90,6 +91,7 @@ class ProDMPPolicy(InternalPolicy):
 
         _, _, _, infos = self.prodmp_env.step(prodmp_weights)
         next_vel = infos[0]["step_actions"][0]
+        self.breaking_flag = self.prodmp_env.get_attr("tracking_controller")[0].old_breaking_flag
 
         # adapt action to environment
         # speed = np.linalg.norm(next_vel)

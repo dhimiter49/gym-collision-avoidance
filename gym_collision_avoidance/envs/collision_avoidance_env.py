@@ -423,6 +423,10 @@ class CollisionAvoidanceEnv(gym.Env):
             else:
                 # agents at their goal shouldn't be penalized if someone else
                 # bumps into them
+                if hasattr(agent.policy, "breaking_flag"):
+                    if not agent.last_breaking_flag and agent.policy.breaking_flag:
+                        agent.breaking_instances += 1
+                        agent.last_breaking_flag = agent.policy.breaking_flag
                 if agent.was_in_collision_already is False:
                     if collision_with_agent[i]:
                         idxs = np.where(collision_with_agent)[0][:2]
