@@ -611,7 +611,6 @@ def cadrl_test_case_to_agents(
     elif type(policies) == list:
         if policy_distr is None:
             # No randomness in agent policies (1st agent gets policies[0], etc.)
-            assert len(policies) >= len(policy_distr)
             agent_policy_list = policies
         else:
             # Random mix of agents following various policies
@@ -631,14 +630,20 @@ def cadrl_test_case_to_agents(
         print("Only handle str or list of strs for policies.")
         raise NotImplementedError
 
-    # agent_policy_list = [policy_dict[policy] for policy in agent_policy_list]
-    agent_dynamics_list = [agents_dynamics for _ in range(num_agents)]
-    # Look up the string name in each dict
-    agent_sensors_list = [
-        [sensor_dict[sensor] for sensor in agents_sensors]
-        for _ in range(num_agents)
-    ]
+    if isinstance(policies, list):
+        agent_sensors_list = [
+            [sensor_dict[sensor] for sensor in agents_sensors[i]]
+            for i in range(num_agents)
+        ]
+        agent_dynamics_list = agents_dynamics
+    else:
+        agent_sensors_list = [
+            [sensor_dict[sensor] for sensor in agents_sensors]
+            for _ in range(num_agents)
+        ]
+        agent_dynamics_list = [agents_dynamics for _ in range(num_agents)]
 
+    np.random.shuffle(test_case)
     for i, agent in enumerate(test_case):
         px = agent[0]
         py = agent[1]
