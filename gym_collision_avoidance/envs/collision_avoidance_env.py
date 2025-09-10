@@ -426,7 +426,7 @@ class CollisionAvoidanceEnv(gym.Env):
                 if hasattr(agent.policy, "breaking_flag"):
                     if not agent.last_breaking_flag and agent.policy.breaking_flag:
                         agent.breaking_instances += 1
-                        agent.last_breaking_flag = agent.policy.breaking_flag
+                    agent.last_breaking_flag = agent.policy.breaking_flag
                 if agent.was_in_collision_already is False:
                     if collision_with_agent[i]:
                         idxs = np.where(collision_with_agent)[0][:2]
