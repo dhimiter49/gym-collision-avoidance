@@ -68,9 +68,10 @@ class MPCPolicy(InternalPolicy):
             crowd_max_vel=max_vel,
             crowd_max_acc=max_acc,
             n_crowd=self.n_crowd,
-            uncertainty="dist",
+            uncertainty="rdist",
             stability_coeff=stability_coeff,
-            # horizon_tries=3
+            horizon_tries=3,
+            relax_uncertainty=0.5
         )
 
 

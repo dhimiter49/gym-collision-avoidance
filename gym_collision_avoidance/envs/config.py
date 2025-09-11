@@ -241,21 +241,26 @@ class Config(object):
 
     def setup_obs(self):
         if not hasattr(self, "STATES_IN_OBS"):
+            # if (
+            #     hasattr(self, "POLICIES_TO_TEST") and
+            #     ("ProDMP" in self.POLICIES_TO_TEST or "MPC" in self.POLICIES_TO_TEST)
+            # ):
+            # self.STATES_IN_OBS = [
+            #     "agents_abs_states",
+            # ]
+            # else:  # GA3C-CADRL-10
+
             self.STATES_IN_OBS = [
+                "is_learning",
+                "num_other_agents",
+                "dist_to_goal",
+                "heading_ego_frame",
+                "pref_speed",
+                "radius",
+                "other_agents_states",
                 "agents_abs_states",
                 "laservelscan",
             ]
-            # self.STATES_IN_OBS = [
-            #     "is_learning",
-            #     "num_other_agents",
-            #     "dist_to_goal",
-            #     "heading_ego_frame",
-            #     "pref_speed",
-            #     "radius",
-            #     "other_agents_states",
-            #     "agents_abs_states",
-            #     "laservelscan",
-            # ]
             # self.STATES_IN_OBS = [
             #     "dist_to_goal",
             #     "radius",
@@ -374,25 +379,13 @@ class LargeNumAgents(EvaluateConfig):
 class FullTestSuite(EvaluateConfig):
     def __init__(self):
         self.MAX_NUM_OTHER_AGENTS_OBSERVED = 19
-        EvaluateConfig.__init__(self)
-        self.SAVE_EPISODE_PLOTS = True
-        self.SHOW_EPISODE_PLOTS = False
-        self.ANIMATE_EPISODES = False
-        self.PLOT_CIRCLES_ALONG_TRAJ = True
-
-        self.NUM_TEST_CASES = 4
-        self.NUM_AGENTS_TO_TEST = [2, 3, 4]
-        self.RECORD_PICKLE_FILES = False
-
-        # # DRLMACA
-        # self.FIXED_RADIUS_AND_VPREF = True
-        # self.NEAR_GOAL_THRESHOLD = 0.8
-
-        # Normal
         self.POLICIES_TO_TEST = [
-            "CADRL",
+            "SAC",
             "RVO",
-            "GA3C-CADRL-10"
+            "RVO",
+            "GA3C-CADRL-10",
+            "ProDMP",
+            "MPC",
             # 'GA3C-CADRL-4-WS-4-1', 'GA3C-CADRL-4-WS-4-2', 'GA3C-CADRL-4-WS-4-3', 'GA3C-CADRL-4-WS-4-4', 'GA3C-CADRL-4-WS-4-5',
             # 'GA3C-CADRL-4-WS-6-1', 'GA3C-CADRL-4-WS-6-2', 'GA3C-CADRL-4-WS-6-3', 'GA3C-CADRL-4-WS-6-4',
             # 'GA3C-CADRL-4-WS-8-1', 'GA3C-CADRL-4-WS-8-2', 'GA3C-CADRL-4-WS-8-3', 'GA3C-CADRL-4-WS-8-4',
@@ -403,6 +396,20 @@ class FullTestSuite(EvaluateConfig):
             # 'GA3C-CADRL-10-LSTM-1', 'GA3C-CADRL-10-LSTM-2', 'GA3C-CADRL-10-LSTM-3', 'GA3C-CADRL-10-LSTM-4', 'GA3C-CADRL-10-LSTM-5',
             # 'CADRL', 'RVO'
         ]
+        EvaluateConfig.__init__(self)
+        self.SAVE_EPISODE_PLOTS = True
+        self.SHOW_EPISODE_PLOTS = False
+        self.ANIMATE_EPISODES = False
+        self.PLOT_CIRCLES_ALONG_TRAJ = True
+
+        self.NUM_TEST_CASES = 500
+        self.NUM_AGENTS_TO_TEST = [6]
+        self.RECORD_PICKLE_FILES = True
+
+        # # DRLMACA
+        # self.FIXED_RADIUS_AND_VPREF = True
+        # self.NEAR_GOAL_THRESHOLD = 0.8
+
         self.FIXED_RADIUS_AND_VPREF = False
         self.NEAR_GOAL_THRESHOLD = 0.2
 

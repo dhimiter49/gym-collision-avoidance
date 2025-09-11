@@ -136,7 +136,6 @@ def main():
     )
     with tqdm(
         total=len(Config.NUM_AGENTS_TO_TEST)
-        * len(Config.POLICIES_TO_TEST)
         * Config.NUM_TEST_CASES
     ) as pbar:
         for num_agents in Config.NUM_AGENTS_TO_TEST:
