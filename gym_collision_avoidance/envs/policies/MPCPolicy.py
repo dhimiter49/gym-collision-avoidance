@@ -109,6 +109,7 @@ class MPCPolicy(InternalPolicy):
         plan = self.planner.plan(obs)
 
         # predict next step
+        self.mpc.current_pos = agent_pos
         pred_traj, self.breaking_flag = self.mpc.get_action(plan, obs)
         next_vel = pred_traj[0]
 

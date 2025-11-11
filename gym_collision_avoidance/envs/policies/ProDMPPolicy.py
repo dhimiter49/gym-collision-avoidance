@@ -45,7 +45,6 @@ class ProDMPPolicy(InternalPolicy):
         self.prodmp_env.env_method("set_wxh", 50, 50)
         # if radius_crowd is not None:
         #     self.prodmp_env.venv.envs[0].tracking_controller.min_dist_crowd = radius_crowd
-        self.prodmp_env.venv.envs[0].tracking_controller.mpc.num_crowd = self.n_crowd
 
 
     def find_next_action(self, obs, agents, i):
@@ -91,7 +90,7 @@ class ProDMPPolicy(InternalPolicy):
 
         _, _, _, infos = self.prodmp_env.step(prodmp_weights)
         next_vel = infos[0]["step_actions"][0]
-        self.braking_flag = self.prodmp_env.get_attr("tracking_controller")[0].old_braking_flag
+        # self.braking_flag = self.prodmp_env.get_attr("tracking_controller")[0].old_braking_flag
 
         # adapt action to environment
         # speed = np.linalg.norm(next_vel)
