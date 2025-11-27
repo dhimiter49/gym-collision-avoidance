@@ -433,13 +433,17 @@ class CollisionAvoidanceEnv(gym.Env):
                         rewards[i] = self.reward_collision_with_agent
                         agent.in_collision = True
                         agent.in_collision_flag = True
-                        agent.in_collision_speed = np.linalg.norm(
-                            self.agents[idxs[0]].vel_global_frame -
-                            self.agents[idxs[1]].vel_global_frame
-                        )
-                        agent.in_collision_agent_speed = np.linalg.norm(
-                            agent.vel_global_frame
-                        )
+                        vel_0 = self.agents[idxs[0]].vel_global_frame
+                        vel_1 = self.agents[idxs[1]].vel_global_frame
+                        if np.all(vel_0 == 0):
+                            vel_0 = self.agents[idxs[0]].past_global_velocities[1]
+                        if np.all(vel_1 == 0):
+                            vel_1 = self.agents[idxs[1]].past_global_velocities[1]
+                        agent.in_collision_speed = np.linalg.norm(vel_0 - vel_1)
+                        vel = agent.vel_global_frame
+                        if np.all(vel == 0.):
+                            vel = agent.past_global_velocities[1]
+                        agent.in_collision_agent_speed = np.linalg.norm(vel)
                         # print("Agent %i: Collision with another agent!"
                         #       % agent.id)
                     elif collision_with_wall[i]:
