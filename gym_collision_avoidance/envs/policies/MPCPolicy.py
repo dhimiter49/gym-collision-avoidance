@@ -31,7 +31,7 @@ class MPCPolicy(InternalPolicy):
         InternalPolicy.__init__(self, str="MPC")
         self.agent_vel = np.zeros(2)
         self.agent_dir = initial_heading
-        self.breaking_flag = False
+        self.braking_flag = False
 
 
     def initialize_network(self, **kwargs):
@@ -110,7 +110,7 @@ class MPCPolicy(InternalPolicy):
 
         # predict next step
         self.mpc.current_pos = agent_pos
-        pred_traj, self.breaking_flag = self.mpc.get_action(plan, obs)
+        pred_traj, self.braking_flag = self.mpc.get_action(plan, obs)
         next_vel = pred_traj[0]
 
         # adapt action to environment
