@@ -142,8 +142,8 @@ class Agent(object):
         self.in_collision_flag = False
         self.in_collision_speed = 0.0
         self.in_collision_agent_speed = 0.0
-        self.breaking_instances = 0
-        self.last_breaking_flag = False
+        self.braking_instances = 0
+        self.last_braking_flag = False
         self.in_agent_speed = 0.0
         self.ran_out_of_time = False
 

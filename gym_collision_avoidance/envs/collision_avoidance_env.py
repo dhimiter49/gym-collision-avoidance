@@ -423,23 +423,25 @@ class CollisionAvoidanceEnv(gym.Env):
             else:
                 # agents at their goal shouldn't be penalized if someone else
                 # bumps into them
-                if hasattr(agent.policy, "breaking_flag"):
-                    if not agent.last_breaking_flag and agent.policy.breaking_flag:
-                        agent.breaking_instances += 1
-                    agent.last_breaking_flag = agent.policy.breaking_flag
+                if hasattr(agent.policy, "braking_flag"):
+                    if not agent.last_braking_flag and agent.policy.braking_flag:
+                        agent.braking_instances += 1
+                    agent.last_braking_flag = agent.policy.braking_flag
                 if agent.was_in_collision_already is False:
                     if collision_with_agent[i]:
                         idxs = np.where(collision_with_agent)[0][:2]
                         rewards[i] = self.reward_collision_with_agent
                         agent.in_collision = True
                         agent.in_collision_flag = True
-                        agent.in_collision_speed = np.linalg.norm(
-                            self.agents[idxs[0]].vel_global_frame -
-                            self.agents[idxs[1]].vel_global_frame
-                        )
-                        agent.in_collision_agent_speed = np.linalg.norm(
-                            agent.vel_global_frame
-                        )
+                        vel_0 = self.agents[idxs[0]].vel_global_frame
+                        vel_1 = self.agents[idxs[1]].vel_global_frame
+                        vel = agent.vel_global_frame
+                        if np.all(vel_0 == 0) and np.all(vel_1 == 0):
+                            vel_0 = self.agents[idxs[0]].past_global_velocities[1]
+                            vel_1 = self.agents[idxs[1]].past_global_velocities[1]
+                            vel = agent.past_global_velocities[1]
+                        agent.in_collision_speed = np.linalg.norm(vel_0 - vel_1)
+                        agent.in_collision_agent_speed = np.linalg.norm(vel)
                         # print("Agent %i: Collision with another agent!"
                         #       % agent.id)
                     elif collision_with_wall[i]:
