@@ -11,6 +11,7 @@ MPC_DICT = {
     "-d": "simple",
     "-lp": "linear_plan",
     "-v": "velocity_control",
+    "-sqp": "sequential",
     "-cs": "cascading",
     "-vcs": "velocity_control_cascading"
 }
@@ -106,7 +107,7 @@ class MPCPolicy(InternalPolicy):
         obs = (goal_rel, crowd_poss_rel, agent_vel, crowd_vels, walls, None)
 
         # plan
-        plan = self.planner.plan(obs)
+        plan = self.planner.plan(obs, agent_pos)
 
         # predict next step
         self.mpc.current_pos = agent_pos
