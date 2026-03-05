@@ -54,13 +54,33 @@ def reset_env(
                 )
             if "ProDMP" == policy:
                 checkpt_name = (
-                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/archive/"
-                    "const_lidar_vel/prodmp_mpc_cnn/scale8/"
-                    "34686aa4-7042-4853-bf2b-bd148d3b3731"
-                    # "/home/dhimiter/Documents/RAM/TrustRegionProjections/results/"
-                    # "mp_config/CrowdNavigationORCALiDARVel-v0/"
-                    # "dcd8c1df-434c-4761-b304-5c3a6e470f7d/"
+                    "/home/dhimiter/Documents/RAM/TrustRegionProjections/"
+                    # "archive/orca_lidar_vel/mpclib/nouncert/"
+                    # "archive/const_lidar_vel/prodmp_mpclib/n20/"
+                    # "results/mp_config/CrowdNavigationConstLiDARVel-v0/"
+                    "results/mp_config/CrowdNavigationORCALiDARVel-v0/"
+                    "newest_orca_mpc_ht3_sc1_d0.41_orca1.2/"
                 )
+
+                seed_list = [
+                    "29f37be6-4582-4b6f-b80f-9c68a49ad91e",
+                    "35dfa849-3d21-4922-b21b-e3fccefcb89f",
+                    "3d98d2fc-6f5a-45b1-a79b-156c8878c08a",
+                    "6260d7c3-9ba5-43e5-a24c-31c05572785e",
+                    "87d2c105-f2a2-4e78-b13e-f920ebb72a66"
+                ]
+
+                if "seed1" in exp_name:
+                    checkpt_name += seed_list[0]
+                elif "seed2" in exp_name:
+                    checkpt_name += seed_list[1]
+                elif "seed3" in exp_name:
+                    checkpt_name += seed_list[2]
+                elif "seed4" in exp_name:
+                    checkpt_name += seed_list[3]
+                elif "seed5" in exp_name:
+                    checkpt_name += seed_list[4]
+
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,
                     n_crowd=num_agents - 1,
@@ -70,8 +90,17 @@ def reset_env(
                     # "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationConstLiDARVel-v0/"
                     # "/sac/12_08_2025-10:55:14-4869/model_sac/rl_model_50000000_steps.zip"
                     "/home/dhimiter/Documents/RAM/sbl/exp/CrowdNavigationORCALiDARVel-v0/"
-                    "/sac/19_08_2025-10:49:18-7205/model_sac/rl_model_50000000_steps.zip"
                 )
+                if "seed1" in exp_name:
+                    checkpt_name += "sac/19_08_2025-10:49:18-7205/model_sac/rl_model_5000000_steps.zip"
+                elif "seed2" in exp_name:
+                    checkpt_name += "/sac/19_08_2025-10:48:51-8167/model_sac/rl_model_5000000_steps.zip"
+                elif "seed3" in exp_name:
+                    checkpt_name += "sac/19_08_2025-10:49:18-6481/model_sac/rl_model_5000000_steps.zip"
+                elif "seed4" in exp_name:
+                    checkpt_name += "sac/19_08_2025-10:49:18-4122/model_sac/rl_model_5000000_steps.zip"
+                elif "seed5" in exp_name:
+                    checkpt_name += "sac/19_08_2025-10:49:18-0540/model_sac/rl_model_5000000_steps.zip"
                 agent.policy.initialize_network(
                     checkpt_name=checkpt_name,
                     n_crowd=num_agents - 1,
